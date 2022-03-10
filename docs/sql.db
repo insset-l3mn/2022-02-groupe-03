@@ -41,7 +41,7 @@ CREATE TABLE Question(
 CREATE TABLE Proposition(
         id_proposition       Int  Auto_increment  NOT NULL ,
         contenu_proposition  Varchar (255) NOT NULL ,
-        validite_proposition Bool NOT NULL
+        validite_proposition Boolean NOT NULL
 	,CONSTRAINT Proposition_PK PRIMARY KEY (id_proposition)
 )ENGINE=InnoDB;
 
@@ -54,7 +54,7 @@ CREATE TABLE Competence(
         id_competence       Int  Auto_increment  NOT NULL ,
         nom_competence      Varchar (255) NOT NULL ,
         poids_competence    Varchar (255) NOT NULL ,
-        testable_competence Bool NOT NULL ,
+        testable_competence Boolean NOT NULL ,
         date_creation       Date NOT NULL ,
         id_utilisateur      Int NOT NULL
 	,CONSTRAINT Competence_PK PRIMARY KEY (id_competence)
@@ -70,7 +70,7 @@ CREATE TABLE Competence(
 CREATE TABLE Questionaire(
         id_questionnaire                 Int  Auto_increment  NOT NULL ,
         nom_questionnaire                Varchar (255) NOT NULL ,
-        sauvegarde_graphe_questionnaire  Varchar (21844) ,
+        sauvegarde_graphe_questionnaire  Longtext ,
         date_questionnaire               Date NOT NULL ,
         score_questionnaire              Varchar (255) ,
         formation_proposee_questionnaire Varchar (255) ,
