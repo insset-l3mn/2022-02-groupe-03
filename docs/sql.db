@@ -1,0 +1,188 @@
+#------------------------------------------------------------
+#        Script MySQL.
+#------------------------------------------------------------
+
+
+#------------------------------------------------------------
+# Table: Utilisateur
+#------------------------------------------------------------
+
+CREATE TABLE Utilisateur(
+        id_utilisateur     Int  Auto_increment  NOT NULL ,
+        nom_utilisateur    Varchar (255) NOT NULL ,
+        prenom_utilisateur Varchar (255) NOT NULL ,
+        email_utilisateur  Varchar (255) NOT NULL ,
+        type_utilisateur   Varchar (255) NOT NULL
+	,CONSTRAINT Utilisateur_PK PRIMARY KEY (id_utilisateur)
+)ENGINE=InnoDB;
+
+
+#------------------------------------------------------------
+# Table: Question
+#------------------------------------------------------------
+
+CREATE TABLE Question(
+        id_question      Int  Auto_increment  NOT NULL ,
+        contenu_question Varchar (255) NOT NULL ,
+        reponse_question Varchar (255) NOT NULL ,
+        aide_question    Varchar (255) ,
+        date_ajouter     Date NOT NULL ,
+        id_utilisateur   Int NOT NULL
+	,CONSTRAINT Question_PK PRIMARY KEY (id_question)
+
+	,CONSTRAINT Question_Utilisateur_FK FOREIGN KEY (id_utilisateur) REFERENCES Utilisateur(id_utilisateur)
+)ENGINE=InnoDB;
+
+
+#------------------------------------------------------------
+# Table: Proposition
+#------------------------------------------------------------
+
+CREATE TABLE Proposition(
+        id_proposition       Int  Auto_increment  NOT NULL ,
+        contenu_proposition  Varchar (255) NOT NULL ,
+        validite_proposition Bool NOT NULL
+	,CONSTRAINT Proposition_PK PRIMARY KEY (id_proposition)
+)ENGINE=InnoDB;
+
+
+#------------------------------------------------------------
+# Table: Competence
+#------------------------------------------------------------
+
+CREATE TABLE Competence(
+        id_competence       Int  Auto_increment  NOT NULL ,
+        nom_competence      Varchar (255) NOT NULL ,
+        poids_competence    Varchar (255) NOT NULL ,
+        testable_competence Bool NOT NULL ,
+        date_creation       Date NOT NULL ,
+        id_utilisateur      Int NOT NULL
+	,CONSTRAINT Competence_PK PRIMARY KEY (id_competence)
+
+	,CONSTRAINT Competence_Utilisateur_FK FOREIGN KEY (id_utilisateur) REFERENCES Utilisateur(id_utilisateur)
+)ENGINE=InnoDB;
+
+
+#------------------------------------------------------------
+# Table: Questionaire
+#------------------------------------------------------------
+
+CREATE TABLE Questionaire(
+        id_questionnaire                 Int  Auto_increment  NOT NULL ,
+        nom_questionnaire                Varchar (255) NOT NULL ,
+        sauvegarde_graphe_questionnaire  Varchar (21844) ,
+        date_questionnaire               Date NOT NULL ,
+        score_questionnaire              Varchar (255) ,
+        formation_proposee_questionnaire Varchar (255) ,
+        id_utilisateur                   Int NOT NULL
+	,CONSTRAINT Questionaire_PK PRIMARY KEY (id_questionnaire)
+
+	,CONSTRAINT Questionaire_Utilisateur_FK FOREIGN KEY (id_utilisateur) REFERENCES Utilisateur(id_utilisateur)
+)ENGINE=InnoDB;
+
+
+#------------------------------------------------------------
+# Table: Modifier_Questionnaire
+#------------------------------------------------------------
+
+CREATE TABLE Modifier_Questionnaire(
+        id_questionnaire         Int NOT NULL ,
+        id_utilisateur           Int NOT NULL ,
+        commentaire_modification Varchar (255) NOT NULL ,
+        date_modification        Date NOT NULL
+	,CONSTRAINT Modifier_Questionnaire_PK PRIMARY KEY (id_questionnaire,id_utilisateur)
+
+	,CONSTRAINT Modifier_Questionnaire_Questionaire_FK FOREIGN KEY (id_questionnaire) REFERENCES Questionaire(id_questionnaire)
+	,CONSTRAINT Modifier_Questionnaire_Utilisateur0_FK FOREIGN KEY (id_utilisateur) REFERENCES Utilisateur(id_utilisateur)
+)ENGINE=InnoDB;
+
+
+#------------------------------------------------------------
+# Table: Posseder_Proposition
+#------------------------------------------------------------
+
+CREATE TABLE Posseder_Proposition(
+        id_proposition Int NOT NULL ,
+        id_question    Int NOT NULL
+	,CONSTRAINT Posseder_Proposition_PK PRIMARY KEY (id_proposition,id_question)
+
+	,CONSTRAINT Posseder_Proposition_Proposition_FK FOREIGN KEY (id_proposition) REFERENCES Proposition(id_proposition)
+	,CONSTRAINT Posseder_Proposition_Question0_FK FOREIGN KEY (id_question) REFERENCES Question(id_question)
+)ENGINE=InnoDB;
+
+
+#------------------------------------------------------------
+# Table: Lier_Competance_Competance
+#------------------------------------------------------------
+
+CREATE TABLE Lier_Competance_Competance(
+        id_competence                            Int NOT NULL ,
+        id_competence_Lier_Competance_Competance Int NOT NULL
+	,CONSTRAINT Lier_Competance_Competance_PK PRIMARY KEY (id_competence,id_competence_Lier_Competance_Competance)
+
+	,CONSTRAINT Lier_Competance_Competance_Competence_FK FOREIGN KEY (id_competence) REFERENCES Competence(id_competence)
+	,CONSTRAINT Lier_Competance_Competance_Competence0_FK FOREIGN KEY (id_competence_Lier_Competance_Competance) REFERENCES Competence(id_competence)
+)ENGINE=InnoDB;
+
+
+#------------------------------------------------------------
+# Table: Lier_Question_Competance
+#------------------------------------------------------------
+
+CREATE TABLE Lier_Question_Competance(
+        id_question   Int NOT NULL ,
+        id_competence Int NOT NULL
+	,CONSTRAINT Lier_Question_Competance_PK PRIMARY KEY (id_question,id_competence)
+
+	,CONSTRAINT Lier_Question_Competance_Question_FK FOREIGN KEY (id_question) REFERENCES Question(id_question)
+	,CONSTRAINT Lier_Question_Competance_Competence0_FK FOREIGN KEY (id_competence) REFERENCES Competence(id_competence)
+)ENGINE=InnoDB;
+
+
+#------------------------------------------------------------
+# Table: Modifier_Competance
+#------------------------------------------------------------
+
+CREATE TABLE Modifier_Competance(
+        id_competence            Int NOT NULL ,
+        id_utilisateur           Int NOT NULL ,
+        commentaire_modification Varchar (255) NOT NULL ,
+        date_modification        Date NOT NULL
+	,CONSTRAINT Modifier_Competance_PK PRIMARY KEY (id_competence,id_utilisateur)
+
+	,CONSTRAINT Modifier_Competance_Competence_FK FOREIGN KEY (id_competence) REFERENCES Competence(id_competence)
+	,CONSTRAINT Modifier_Competance_Utilisateur0_FK FOREIGN KEY (id_utilisateur) REFERENCES Utilisateur(id_utilisateur)
+)ENGINE=InnoDB;
+
+
+#------------------------------------------------------------
+# Table: Modifier_Question
+#------------------------------------------------------------
+
+CREATE TABLE Modifier_Question(
+        id_question         Int NOT NULL ,
+        id_utilisateur      Int NOT NULL ,
+        date_modifier       Date NOT NULL ,
+        comentaire_modifier Varchar (255) NOT NULL
+	,CONSTRAINT Modifier_Question_PK PRIMARY KEY (id_question,id_utilisateur)
+
+	,CONSTRAINT Modifier_Question_Question_FK FOREIGN KEY (id_question) REFERENCES Question(id_question)
+	,CONSTRAINT Modifier_Question_Utilisateur0_FK FOREIGN KEY (id_utilisateur) REFERENCES Utilisateur(id_utilisateur)
+)ENGINE=InnoDB;
+
+
+#------------------------------------------------------------
+# Table: Contenir_Question
+#------------------------------------------------------------
+
+CREATE TABLE Contenir_Question(
+        id_question            Int NOT NULL ,
+        id_questionnaire       Int NOT NULL ,
+        id_proposition_choisie Varchar (255) NOT NULL ,
+        reussite_question      Boolean NOT NULL
+	,CONSTRAINT Contenir_Question_PK PRIMARY KEY (id_question,id_questionnaire)
+
+	,CONSTRAINT Contenir_Question_Question_FK FOREIGN KEY (id_question) REFERENCES Question(id_question)
+	,CONSTRAINT Contenir_Question_Questionaire0_FK FOREIGN KEY (id_questionnaire) REFERENCES Questionaire(id_questionnaire)
+)ENGINE=InnoDB;
+
