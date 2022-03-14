@@ -9,6 +9,7 @@
 
 - BDD prête
 - API fonctionnelle dans sa globalité
+- Pour la connexion dans le cadre de la première version, pas de hachage + vérifications avancées ?
 - Gestion/génération du graphe à voir (suivant les choix au niveau du front-end : import/export json ?)
 
 ## Notes projets niveau global :
