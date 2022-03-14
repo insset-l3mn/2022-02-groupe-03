@@ -11,6 +11,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -18,6 +19,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 /**
  *
@@ -35,23 +37,56 @@ public class UtilisateurFacadeREST extends AbstractFacade<Utilisateur> {
     }
 
     @POST
-    @Override
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public void create(Utilisateur entity) {
-        super.create(entity);
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Path("/add")
+    public Response create(@FormParam("nom_utilisateur") String nomUtilisateur, @FormParam("prenom_utilisateur") String prenomUtilisateur, @FormParam("email_utilisateur") String emailUtilisateur, @FormParam("type_utilisateur") String typeUtilisateur) {
+        if (nomUtilisateur != null && prenomUtilisateur != null && emailUtilisateur != null && typeUtilisateur != null) {
+            Utilisateur entity = new Utilisateur();
+            entity.setNomUtilisateur(nomUtilisateur);
+            entity.setPrenomUtilisateur(prenomUtilisateur);
+            entity.setEmailUtilisateur(emailUtilisateur);
+            entity.setTypeUtilisateur(typeUtilisateur);
+            super.create(entity);  
+           return Response.status(200).build();
+        }
+        return Response.status(406).build();
+        
     }
 
     @PUT
-    @Path("{id}")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public void edit(@PathParam("id") Integer id, Utilisateur entity) {
-        super.edit(entity);
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Path("/update/{id}")
+    public Response edit(@PathParam("id") Integer id, @FormParam("nom_utilisateur") String nomUtilisateur, @FormParam("prenom_utilisateur") String prenomUtilisateur, @FormParam("email_utilisateur") String emailUtilisateur, @FormParam("type_utilisateur") String typeUtilisateur) {
+        Utilisateur entity = super.find(id);
+        if (entity != null) {
+            if (nomUtilisateur != null) {
+                entity.setNomUtilisateur(nomUtilisateur);
+            }
+            if (prenomUtilisateur != null) {
+                entity.setNomUtilisateur(prenomUtilisateur);
+            }
+            if (emailUtilisateur != null) {
+                entity.setNomUtilisateur(emailUtilisateur);
+            }
+            if (typeUtilisateur != null) {
+                entity.setNomUtilisateur(typeUtilisateur);
+            }
+            return Response.status(200).build();
+        }
+        
+        return Response.status(404).build();
     }
 
     @DELETE
     @Path("{id}")
-    public void remove(@PathParam("id") Integer id) {
-        super.remove(super.find(id));
+    public Response remove(@PathParam("id") Integer id) {
+        Utilisateur entity = super.find(id);
+        if (entity != null) {
+            super.remove(super.find(id));
+            return Response.status(200).build();
+        } else {
+            return Response.status(404).build();
+        }
     }
 
     @GET
