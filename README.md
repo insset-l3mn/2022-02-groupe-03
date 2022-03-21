@@ -4,6 +4,9 @@
 
 - 2022-03-08 : Ajout Dossier React comprenant partie visuelle avec signup et login
 - Questions prises sur une API a modifier et interface de graphe a faire
+- 2022-03-21 : Ajout des graphes, implémentation dans la navbar 
+- Création pageAdmin et privateRoute, modification auth système
+
 
 ## Notes back-end Jakarta :
 
