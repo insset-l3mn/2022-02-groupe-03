@@ -71,6 +71,7 @@ public class UtilisateurFacadeREST extends AbstractFacade<Utilisateur> {
             if (typeUtilisateur != null) {
                 entity.setNomUtilisateur(typeUtilisateur);
             }
+            super.edit(entity);
             return Response.status(200).build();
         }
         
