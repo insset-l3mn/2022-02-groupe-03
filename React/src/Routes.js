@@ -4,6 +4,9 @@ import Home from "./Pages/Home/Home.js";
 import Login from "./container/Login";
 import Signup from "./container/Signup";
 
+import Graphe from "./container/Graphe";
+import GrapheAdmin from "./container/GrapheAdmin";
+
 export default function Routes() {
     return (
         <Switch>
@@ -12,6 +15,12 @@ export default function Routes() {
             </Route>
             <Route exact path="/signup">
                 <Signup />
+            </Route>
+            <Route exact path="/graphe">
+                <Graphe />
+            </Route>
+            <Route exact path="/GrapheAdmin">
+                <GrapheAdmin />
             </Route>
         </Switch>
     );

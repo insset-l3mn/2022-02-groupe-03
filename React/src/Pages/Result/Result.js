@@ -3,6 +3,8 @@ import { useEffect } from "react";
 import { useHistory } from "react-router";
 import React, { Component }  from 'react';
 import "./Result.css";
+import {Route, Switch} from "react-router-dom";
+import Graphe from "../../container/Graphe";
 
 const Result = ({ name, score }) => {
   const history = useHistory();
@@ -25,6 +27,9 @@ const Result = ({ name, score }) => {
       >
         Go to homepage
       </Button>
+        <Route exact path="/graphe">
+            <Graphe />
+        </Route>
     </div>
   );
 };
