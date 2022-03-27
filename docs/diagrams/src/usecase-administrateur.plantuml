@@ -1,0 +1,37 @@
+@startuml "Diagramme de cas d'utilisation administrateur"
+left to right direction
+
+actor "Administrateur" as admin
+
+usecase "Ajouter des compétences" as UC1
+usecase "Modifier des compétences" as UC2
+usecase "Vérifier les suggestions de création de liens entre des compétences" as UC4
+usecase "Créer des liens entre des compétences" as UC5
+usecase "Vérifier les suggestions de suppression de liens entre des compétences" as UC6
+usecase "Supprimer des liens entre des compétences" as UC7
+usecase "Supprimer des compétences" as UC8
+usecase "Ajouter des questions" as UC9
+usecase "Modifier des questions" as UC10
+usecase "Supprimer des questions" as UC11
+usecase "Accéder à l'historique de modifications du graphe" as UC12
+usecase "Appliquer les modifications au graphe global" as UC13
+usecase "Éditer son profil" as UC14
+usecase "Se déconnecter" as UC15
+
+admin --> UC1
+admin --> UC2
+' admin --> UC3
+admin --> UC4
+admin --> UC5
+admin --> UC6
+admin --> UC7
+admin --> UC8
+admin --> UC9
+admin --> UC10
+admin --> UC11
+admin --> UC12
+admin --> UC13
+admin --> UC14
+admin --> UC15
+
+@enduml
