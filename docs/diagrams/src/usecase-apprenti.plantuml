@@ -1,0 +1,18 @@
+@startuml "Diagramme de cas d'utilisation apprenti"
+left to right direction
+
+actor "Apprenti" as apprenti
+
+usecase "Paramétrer un questionnaire" as UC1
+usecase "Répondre à un questionnaire" as UC2
+usecase "Accéder aux résultats d'un questionnaire" as UC3
+usecase "Éditer son profil" as UC4
+usecase "Se déconnecter" as UC5
+
+apprenti --> UC1
+apprenti --> UC2
+apprenti --> UC3
+apprenti --> UC4
+apprenti --> UC5
+
+@enduml
