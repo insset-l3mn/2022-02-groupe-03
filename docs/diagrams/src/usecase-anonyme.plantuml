@@ -1,0 +1,12 @@
+@startuml "Diagramme de cas d'utilisation anonyme"
+left to right direction
+
+actor "Utilisateur non connecté" as anonyme
+
+usecase "Se connecter" as UC1
+usecase "S'inscrire" as UC2
+
+anonyme --> UC1
+anonyme --> UC2
+
+@enduml
