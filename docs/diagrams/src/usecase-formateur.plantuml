@@ -1,0 +1,32 @@
+@startuml "Diagramme de cas d'utilisation formateur"
+left to right direction
+
+actor "Formateur" as formateur
+
+usecase "Ajouter des compétences" as UC1
+usecase "Suggérer la modification de compétences" as UC2
+usecase "Suggérer la création de liens entre des compétences" as UC3
+usecase "Suggérer la suppression de liens entre des compétences" as UC4
+usecase "Suggérer la suppression de compétences" as UC5
+usecase "Ajouter des questions" as UC6
+usecase "Modifier des questions" as UC7
+usecase "Supprimer des questions" as UC8
+usecase "Accéder à l'historique de modifications du graphe" as UC9
+usecase "Voir le graphe et les réponses des apprentis asignés" as UC10
+usecase "Éditer son profil" as UC11
+usecase "Se déconnecter" as UC12
+
+formateur --> UC1
+formateur --> UC2
+formateur --> UC3
+formateur --> UC4
+formateur --> UC5
+formateur --> UC6
+formateur --> UC7
+formateur --> UC8
+formateur --> UC9
+formateur --> UC10
+formateur --> UC11
+formateur --> UC12
+
+@enduml
