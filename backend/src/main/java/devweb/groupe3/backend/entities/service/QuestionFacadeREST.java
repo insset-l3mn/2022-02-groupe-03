@@ -5,6 +5,8 @@
 package devweb.groupe3.backend.entities.service;
 
 import devweb.groupe3.backend.entities.Competence;
+import devweb.groupe3.backend.entities.ModifierQuestion;
+import devweb.groupe3.backend.entities.ModifierQuestionPK;
 import devweb.groupe3.backend.entities.Proposition;
 import devweb.groupe3.backend.entities.Question;
 import devweb.groupe3.backend.entities.Utilisateur;
@@ -16,6 +18,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 import javax.ejb.Stateless;
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.ws.rs.Consumes;
@@ -48,59 +51,119 @@ public class QuestionFacadeREST extends AbstractFacade<Question> {
 
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    @Path("/add")
-    public Response create(@FormParam("id_utilisateur") int idUtilisateur, @FormParam("id_competence") int idCompetence, @FormParam("contenu_question") String contenuQuestion, @FormParam("reponse_question") String reponseQuestion, @FormParam("aide_question") String aideQuestion) {
-        if (contenuQuestion != null && reponseQuestion != null && aideQuestion != null) {
-            Question entityQuestion = new Question();
-            Competence entityCompetence = em.find(Competence.class, idCompetence);
-            if (entityCompetence == null) {
-                return Response.status(403).build();
+    @Path("/add/{id_utilisateur}")
+    public Response create(@PathParam("id_utilisateur") int idUtilisateur, @FormParam("id_competence") int idCompetence, @FormParam("contenu_question") String contenuQuestion, @FormParam("reponse_question") String reponseQuestion, @FormParam("aide_question") String aideQuestion) {
+        if (idUtilisateur != 0) {
+            Utilisateur utilisateur = em.find(Utilisateur.class, idUtilisateur);
+            if (utilisateur != null) {
+                if ("admin".equalsIgnoreCase(utilisateur.getTypeUtilisateur())) {
+                    if (contenuQuestion != null && reponseQuestion != null && aideQuestion != null) {
+                        Question entityQuestion = new Question();
+                        Competence entityCompetence = em.find(Competence.class, idCompetence);
+                        if (entityCompetence == null) {
+                            return Response.status(403).build();
+                        }
+                        Utilisateur entityUtilisateur = em.find(Utilisateur.class, idUtilisateur);
+                        if (entityUtilisateur == null) {
+                            return Response.status(403).build();
+                        }
+                        entityQuestion.setIdUtilisateur(entityUtilisateur);
+                        entityQuestion.setContenuQuestion(contenuQuestion);
+                        entityQuestion.setReponseQuestion(reponseQuestion);
+                        entityQuestion.setAideQuestion(aideQuestion);
+                        Date today = DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH);
+                        entityQuestion.setDateAjouter(today);
+                        entityQuestion.setCompetenceCollection(entityCompetence.getCompetenceCollection());
+                        super.create(entityQuestion);
+                        return Response.status(200).build();
+                    } else {
+                        return Response.status(404).build();
+                    }
+                } else {
+                    return Response.status(401).build();
+                }
+            } else {
+                return Response.status(404).build();
             }
-            Utilisateur entityUtilisateur = em.find(Utilisateur.class, idUtilisateur);
-            if (entityUtilisateur == null) {
-                return Response.status(403).build();
-            }
-            entityQuestion.setIdUtilisateur(entityUtilisateur);
-            entityQuestion.setContenuQuestion(contenuQuestion);
-            entityQuestion.setReponseQuestion(reponseQuestion);
-            entityQuestion.setAideQuestion(aideQuestion);
-            Date today = DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH);
-            entityQuestion.setDateAjouter(today);
-            entityQuestion.setCompetenceCollection(entityCompetence.getCompetenceCollection());
-            super.create(entityQuestion);
-            return Response.status(200).build();
         } else {
-            return Response.status(402).build();
+            return Response.status(404).build();
         }
 
     }
 
     @PUT
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    @Path("/update/{id}")
-    public Response edit(@PathParam("id") Integer id, @FormParam("contenu_question") String contenuQuestion, @FormParam("reponse_question") String reponseQuestion, @FormParam("aideQuestion") String aideQuestion, @FormParam("date_ajouter") Date dateAjouter) {
+    @Path("update/{id_utilisateur}/{id}")
+    public Response edit(@PathParam("id") Integer id, @PathParam("id_utilisateur") int idUtilisateur, @FormParam("contenu_question") String contenuQuestion, @FormParam("reponse_question") String reponseQuestion, @FormParam("aideQuestion") String aideQuestion, @FormParam("commentaire_modifier") String commentaireModifier) {
         Question entity = super.find(id);
-        if (entity != null) {
-            if (contenuQuestion != null) {
-                entity.setContenuQuestion(contenuQuestion);
-            }
-            if (reponseQuestion != null) {
-                entity.setReponseQuestion(reponseQuestion);
-            }
-            if (aideQuestion != null) {
-                entity.setAideQuestion(aideQuestion);
-            }
-            super.edit(entity);
-            return Response.status(200).build();
-        }
+        if (idUtilisateur != 0) {
+            Utilisateur utilisateur = em.find(Utilisateur.class, idUtilisateur);
+            if (utilisateur != null) {
+                if ("admin".equalsIgnoreCase(utilisateur.getTypeUtilisateur())) {
+                    if (entity != null) {
+                        if (contenuQuestion != null) {
+                            entity.setContenuQuestion(contenuQuestion);
+                        }
+                        if (reponseQuestion != null) {
+                            entity.setReponseQuestion(reponseQuestion);
+                        }
+                        if (aideQuestion != null) {
+                            entity.setAideQuestion(aideQuestion);
+                        }
+                        ModifierQuestion modif = new ModifierQuestion();
+                        ModifierQuestionPK modifPK = new ModifierQuestionPK();
+                        modifPK.setIdQuestion(entity.getIdQuestion());
+                        modifPK.setIdUtilisateur(utilisateur.getIdUtilisateur());
+                        modif.setUtilisateur(utilisateur);
+                        modif.setQuestion(entity);
+                        modif.setModifierQuestionPK(modifPK);
+                        Date today = DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH);
+                        modif.setDateModifier(today);
+                        if (commentaireModifier != null) {
+                            modif.setComentaireModifier(commentaireModifier);
+                        }
+                        em.merge(modif);
+                        super.edit(entity);
+                        return Response.status(200).build();
+                    } else {
+                        return Response.status(404).build();
 
-        return Response.status(404).build();
+                    }
+                } else {
+                    return Response.status(401).build();
+                }
+            } else {
+                return Response.status(404).build();
+            }
+        } else {
+            return Response.status(404).build();
+        }
     }
 
     @DELETE
-    @Path("{id}")
-    public void remove(@PathParam("id") Integer id) {
-        super.remove(super.find(id));
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Path("delete/{id_utilisateur}/{id}")
+    public Response remove(@PathParam("id") Integer id, @PathParam("id_utilisateur") int idUtilisateur) {
+        if (idUtilisateur != 0) {
+            Utilisateur utilisateur = em.find(Utilisateur.class, idUtilisateur);
+            if (utilisateur != null) {
+                if ("admin".equalsIgnoreCase(utilisateur.getTypeUtilisateur())) {
+                    Question entity = super.find(id);
+                    if (entity != null) {
+                        super.remove(entity);
+                        return Response.status(200).build();
+                    } else {
+                        return Response.status(404).build();
+                    }
+                } else {
+                    return Response.status(401).build();
+                }
+            } else {
+                return Response.status(404).build();
+            }
+        } else {
+            return Response.status(404).build();
+        }
     }
 
     @GET
