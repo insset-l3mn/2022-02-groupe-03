@@ -7,6 +7,7 @@ package devweb.groupe3.backend.entities;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -66,6 +67,7 @@ public class Question implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date dateAjouter;
     @ManyToMany(mappedBy = "questionCollection")
+    @JsonbTransient
     private Collection<Competence> competenceCollection;
     @ManyToMany(mappedBy = "questionCollection")
     private Collection<Proposition> propositionCollection;
@@ -75,6 +77,7 @@ public class Question implements Serializable {
     private Collection<ModifierQuestion> modifierQuestionCollection;
     @JoinColumn(name = "id_utilisateur", referencedColumnName = "id_utilisateur")
     @ManyToOne(optional = false)
+    @JsonbTransient
     private Utilisateur idUtilisateur;
 
     public Question() {
