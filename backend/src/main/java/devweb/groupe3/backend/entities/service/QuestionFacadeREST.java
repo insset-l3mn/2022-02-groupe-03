@@ -4,10 +4,17 @@
  */
 package devweb.groupe3.backend.entities.service;
 
+import devweb.groupe3.backend.entities.Competence;
 import devweb.groupe3.backend.entities.Proposition;
 import devweb.groupe3.backend.entities.Question;
+import devweb.groupe3.backend.entities.Utilisateur;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -22,6 +29,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.apache.commons.lang.time.DateUtils;
 
 /**
  *
@@ -41,17 +49,30 @@ public class QuestionFacadeREST extends AbstractFacade<Question> {
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Path("/add")
-    public Response create(@FormParam("contenu_question") String contenuQuestion, @FormParam("reponse_question") String reponseQuestion, @FormParam("aideQuestion") String aideQuestion, @FormParam("date_ajouter") Date dateAjouter) {
-        if (contenuQuestion != null && reponseQuestion != null && aideQuestion != null && dateAjouter != null) {
+    public Response create(@FormParam("id_utilisateur") int idUtilisateur, @FormParam("id_competence") int idCompetence, @FormParam("contenu_question") String contenuQuestion, @FormParam("reponse_question") String reponseQuestion, @FormParam("aide_question") String aideQuestion) {
+        if (contenuQuestion != null && reponseQuestion != null && aideQuestion != null) {
             Question entityQuestion = new Question();
+            Competence entityCompetence = em.find(Competence.class, idCompetence);
+            if (entityCompetence == null) {
+                return Response.status(403).build();
+            }
+            Utilisateur entityUtilisateur = em.find(Utilisateur.class, idUtilisateur);
+            if (entityUtilisateur == null) {
+                return Response.status(403).build();
+            }
+            entityQuestion.setIdUtilisateur(entityUtilisateur);
             entityQuestion.setContenuQuestion(contenuQuestion);
             entityQuestion.setReponseQuestion(reponseQuestion);
             entityQuestion.setAideQuestion(aideQuestion);
-            entityQuestion.setDateAjouter(dateAjouter);
-            super.create(entityQuestion);  
-           return Response.status(200).build();
+            Date today = DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH);
+            entityQuestion.setDateAjouter(today);
+            entityQuestion.setCompetenceCollection(entityCompetence.getCompetenceCollection());
+            super.create(entityQuestion);
+            return Response.status(200).build();
+        } else {
+            return Response.status(402).build();
         }
-        return Response.status(406).build();
+
     }
 
     @PUT
@@ -72,7 +93,7 @@ public class QuestionFacadeREST extends AbstractFacade<Question> {
             super.edit(entity);
             return Response.status(200).build();
         }
-        
+
         return Response.status(404).build();
     }
 
@@ -114,5 +135,5 @@ public class QuestionFacadeREST extends AbstractFacade<Question> {
     protected EntityManager getEntityManager() {
         return em;
     }
-    
+
 }
