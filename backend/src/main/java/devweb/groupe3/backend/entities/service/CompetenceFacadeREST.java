@@ -5,12 +5,18 @@
 package devweb.groupe3.backend.entities.service;
 
 import devweb.groupe3.backend.entities.Competence;
+import devweb.groupe3.backend.entities.ModifierCompetance;
+import devweb.groupe3.backend.entities.ModifierCompetancePK;
+import devweb.groupe3.backend.entities.Utilisateur;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -18,6 +24,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import org.apache.commons.lang.time.DateUtils;
 
 /**
  *
@@ -35,23 +43,111 @@ public class CompetenceFacadeREST extends AbstractFacade<Competence> {
     }
 
     @POST
-    @Override
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public void create(Competence entity) {
-        super.create(entity);
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Path("/add/{id_utilisateur}")
+    public Response create(@PathParam("id_utilisateur") Integer idUtilisateur, @FormParam("nom_competence") String nomCompetence, @FormParam("poids_competence") Integer poidsCompetence, @FormParam("testable_competence") Boolean testableCompetence) {
+        if (idUtilisateur != null) {
+            Utilisateur utilisateur = em.find(Utilisateur.class, idUtilisateur);
+            if (utilisateur != null) {
+                if ("admin".equalsIgnoreCase(utilisateur.getTypeUtilisateur())) {
+                    if (nomCompetence != null && poidsCompetence != null && testableCompetence != null) {
+                        Competence entityCompetence = new Competence();
+                        entityCompetence.setNomCompetence(nomCompetence);
+                        entityCompetence.setPoidsCompetence(poidsCompetence.toString());
+                        entityCompetence.setTestableCompetence(testableCompetence);
+                        entityCompetence.setIdUtilisateur(utilisateur);
+                        Date today = DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH);
+                        entityCompetence.setDateCreation(today);
+                        super.create(entityCompetence);
+                        return Response.status(200).build();
+                    } else {
+                        return Response.status(404).build();
+                    }
+                } else {
+                    return Response.status(401).build();
+                }
+            } else {
+                return Response.status(404).build();
+            }
+        } else {
+            return Response.status(404).build();
+        }
+
     }
 
-    @PUT
-    @Path("{id}")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public void edit(@PathParam("id") Integer id, Competence entity) {
-        super.edit(entity);
-    }
+@PUT
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Path("update/{id_utilisateur}/{id}")
+    public Response edit(@PathParam("id") Integer id, @PathParam("id_utilisateur") int idUtilisateur, @FormParam("nom_competence") String nomCompetence, @FormParam("poids_competence") Integer poidsCompetence, @FormParam("testable_competence") Boolean testableCompetence, @FormParam("commentaire_modification") String commentaireModification) {
+        Competence entity = super.find(id);
+        if (idUtilisateur != 0) {
+            Utilisateur utilisateur = em.find(Utilisateur.class, idUtilisateur);
+            if (utilisateur != null) {
+                if ("admin".equalsIgnoreCase(utilisateur.getTypeUtilisateur())) {
+                    if (entity != null) {
+                        if (nomCompetence != null) {
+                            entity.setNomCompetence(nomCompetence);
+                        }
+                        if (poidsCompetence != null) {
+                            entity.setPoidsCompetence(poidsCompetence.toString());
+                        }
+                        if (testableCompetence != null) {
+                            entity.setTestableCompetence(testableCompetence);
+                        }
+                        ModifierCompetance modif = new ModifierCompetance();
+                        ModifierCompetancePK modifPK = new ModifierCompetancePK();
+                        modifPK.setIdCompetence(entity.getIdCompetence());
+                        modifPK.setIdUtilisateur(utilisateur.getIdUtilisateur());
+                        modif.setUtilisateur(utilisateur);
+                        modif.setCompetence(entity);
+                        modif.setModifierCompetancePK(modifPK);
+                        Date today = DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH);
+                        modif.setDateModification(today);
+                        if (commentaireModification != null) {
+                            modif.setCommentaireModification(commentaireModification);
+                        }
+                        em.merge(modif);
+                        super.edit(entity);
+                        return Response.status(200).build();
+                    } else {
+                        return Response.status(404).build();
 
+                    }
+                } else {
+                    return Response.status(401).build();
+                }
+            } else {
+                return Response.status(404).build();
+            }
+        } else {
+            return Response.status(404).build();
+        }
+    }
+    
     @DELETE
-    @Path("{id}")
-    public void remove(@PathParam("id") Integer id) {
-        super.remove(super.find(id));
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Path("delete/{id_utilisateur}/{id}")
+    public Response remove(@PathParam("id") Integer id, @PathParam("id_utilisateur") int idUtilisateur) {
+        if (idUtilisateur != 0) {
+            Utilisateur utilisateur = em.find(Utilisateur.class, idUtilisateur);
+            if (utilisateur != null) {
+                if ("admin".equalsIgnoreCase(utilisateur.getTypeUtilisateur())) {
+                    Competence entity = super.find(id);
+                    if (entity != null) {
+                        super.remove(entity);
+                        return Response.status(200).build();
+                    } else {
+                        return Response.status(404).build();
+                    }
+                } else {
+                    return Response.status(401).build();
+                }
+            } else {
+                return Response.status(404).build();
+            }
+        } else {
+            return Response.status(404).build();
+        }
     }
 
     @GET
