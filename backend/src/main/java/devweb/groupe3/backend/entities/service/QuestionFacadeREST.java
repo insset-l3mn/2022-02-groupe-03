@@ -45,29 +45,22 @@ public class QuestionFacadeREST extends AbstractFacade<Question> {
 
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    @Path("/add/{id_utilisateur}")
-    public Response create(@PathParam("id_utilisateur") Integer idUtilisateur, @FormParam("id_competence") int idCompetence, @FormParam("contenu_question") String contenuQuestion, @FormParam("reponse_question") String reponseQuestion, @FormParam("aide_question") String aideQuestion) {
+    @Path("/add/{id_utilisateur}/{id_competence}")
+    public Response create(@PathParam("id_utilisateur") Integer idUtilisateur, @PathParam("id_competence") Integer idCompetence, @FormParam("contenu_question") String contenuQuestion, @FormParam("reponse_question") String reponseQuestion, @FormParam("aide_question") String aideQuestion) {
         if (idUtilisateur != null) {
             Utilisateur utilisateur = em.find(Utilisateur.class, idUtilisateur);
-            if (utilisateur != null) {
+            Competence competence = em.find(Competence.class, idCompetence);
+            if (utilisateur != null && competence != null) {
                 if ("admin".equalsIgnoreCase(utilisateur.getTypeUtilisateur())) {
                     if (contenuQuestion != null && reponseQuestion != null && aideQuestion != null) {
                         Question entityQuestion = new Question();
-                        Competence entityCompetence = em.find(Competence.class, idCompetence);
-                        if (entityCompetence == null) {
-                            return Response.status(403).build();
-                        }
-                        Utilisateur entityUtilisateur = em.find(Utilisateur.class, idUtilisateur);
-                        if (entityUtilisateur == null) {
-                            return Response.status(403).build();
-                        }
-                        entityQuestion.setIdUtilisateur(entityUtilisateur);
+                        entityQuestion.setIdUtilisateur(utilisateur);
                         entityQuestion.setContenuQuestion(contenuQuestion);
                         entityQuestion.setReponseQuestion(reponseQuestion);
                         entityQuestion.setAideQuestion(aideQuestion);
                         Date today = DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH);
                         entityQuestion.setDateAjouter(today);
-                        entityQuestion.setCompetenceCollection(entityCompetence.getCompetenceCollection());
+                        entityQuestion.setCompetenceCollection(competence.getCompetenceCollection1());
                         super.create(entityQuestion);
                         return Response.status(200).build();
                     } else {
