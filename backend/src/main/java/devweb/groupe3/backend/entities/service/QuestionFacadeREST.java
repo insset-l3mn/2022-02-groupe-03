@@ -46,8 +46,8 @@ public class QuestionFacadeREST extends AbstractFacade<Question> {
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Path("/add/{id_utilisateur}")
-    public Response create(@PathParam("id_utilisateur") int idUtilisateur, @FormParam("id_competence") int idCompetence, @FormParam("contenu_question") String contenuQuestion, @FormParam("reponse_question") String reponseQuestion, @FormParam("aide_question") String aideQuestion) {
-        if (idUtilisateur != 0) {
+    public Response create(@PathParam("id_utilisateur") Integer idUtilisateur, @FormParam("id_competence") int idCompetence, @FormParam("contenu_question") String contenuQuestion, @FormParam("reponse_question") String reponseQuestion, @FormParam("aide_question") String aideQuestion) {
+        if (idUtilisateur != null) {
             Utilisateur utilisateur = em.find(Utilisateur.class, idUtilisateur);
             if (utilisateur != null) {
                 if ("admin".equalsIgnoreCase(utilisateur.getTypeUtilisateur())) {
@@ -88,9 +88,9 @@ public class QuestionFacadeREST extends AbstractFacade<Question> {
     @PUT
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Path("update/{id_utilisateur}/{id}")
-    public Response edit(@PathParam("id") Integer id, @PathParam("id_utilisateur") int idUtilisateur, @FormParam("contenu_question") String contenuQuestion, @FormParam("reponse_question") String reponseQuestion, @FormParam("aideQuestion") String aideQuestion, @FormParam("commentaire_modifier") String commentaireModifier) {
+    public Response edit(@PathParam("id") Integer id, @PathParam("id_utilisateur") Integer idUtilisateur, @FormParam("contenu_question") String contenuQuestion, @FormParam("reponse_question") String reponseQuestion, @FormParam("aideQuestion") String aideQuestion, @FormParam("commentaire_modifier") String commentaireModifier) {
         Question entity = super.find(id);
-        if (idUtilisateur != 0) {
+        if (idUtilisateur != null) {
             Utilisateur utilisateur = em.find(Utilisateur.class, idUtilisateur);
             if (utilisateur != null) {
                 if ("admin".equalsIgnoreCase(utilisateur.getTypeUtilisateur())) {
