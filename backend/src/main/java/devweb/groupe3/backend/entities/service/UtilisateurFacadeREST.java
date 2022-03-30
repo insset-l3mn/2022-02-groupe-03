@@ -38,95 +38,54 @@ public class UtilisateurFacadeREST extends AbstractFacade<Utilisateur> {
 
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    @Path("/add/{id_utilisateur}")
-    public Response create(@PathParam("id_utilisateur") int idUtilisateur, @FormParam("nom_utilisateur") String nomUtilisateur, @FormParam("prenom_utilisateur") String prenomUtilisateur, @FormParam("email_utilisateur") String emailUtilisateur, @FormParam("type_utilisateur") String typeUtilisateur) {
-        if (idUtilisateur != 0) {
-            Utilisateur utilisateur = em.find(Utilisateur.class, idUtilisateur);
-            if (utilisateur != null) {
-                if ("admin".equalsIgnoreCase(utilisateur.getTypeUtilisateur())) {
-                    if (nomUtilisateur != null && prenomUtilisateur != null && emailUtilisateur != null && typeUtilisateur != null) {
-                        Utilisateur entity = new Utilisateur();
-                        entity.setNomUtilisateur(nomUtilisateur);
-                        entity.setPrenomUtilisateur(prenomUtilisateur);
-                        entity.setEmailUtilisateur(emailUtilisateur);
-                        entity.setTypeUtilisateur(typeUtilisateur);
-                        super.create(entity);
-                        return Response.status(200).build();
-                    }
-                    return Response.status(406).build();
-                } else {
-                    return Response.status(401).build();
-                }
-            } else {
-                return Response.status(404).build();
-            }
-        } else {
-            return Response.status(404).build();
+    @Path("/add")
+    public Response create(@FormParam("nom_utilisateur") String nomUtilisateur, @FormParam("prenom_utilisateur") String prenomUtilisateur, @FormParam("email_utilisateur") String emailUtilisateur, @FormParam("type_utilisateur") String typeUtilisateur) {
+        if (nomUtilisateur != null && prenomUtilisateur != null && emailUtilisateur != null && typeUtilisateur != null) {
+            Utilisateur entity = new Utilisateur();
+            entity.setNomUtilisateur(nomUtilisateur);
+            entity.setPrenomUtilisateur(prenomUtilisateur);
+            entity.setEmailUtilisateur(emailUtilisateur);
+            entity.setTypeUtilisateur(typeUtilisateur);
+            super.create(entity);
+            return Response.status(200).build();
         }
-
+        return Response.status(406).build();
     }
 
     @PUT
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    @Path("/update/{id_utilisateur}/{id}")
-    public Response edit(@PathParam("id_utilisateur") int idUtilisateur, @PathParam("id") Integer id, @FormParam("nom_utilisateur") String nomUtilisateur, @FormParam("prenom_utilisateur") String prenomUtilisateur, @FormParam("email_utilisateur") String emailUtilisateur, @FormParam("type_utilisateur") String typeUtilisateur) {
-        if (idUtilisateur != 0) {
-            Utilisateur utilisateur = em.find(Utilisateur.class, idUtilisateur);
-            if (utilisateur != null) {
-                if ("admin".equalsIgnoreCase(utilisateur.getTypeUtilisateur())) {
-                    Utilisateur entity = super.find(id);
-                    if (entity != null) {
-                        if (nomUtilisateur != null) {
-                            entity.setNomUtilisateur(nomUtilisateur);
-                        }
-                        if (prenomUtilisateur != null) {
-                            entity.setNomUtilisateur(prenomUtilisateur);
-                        }
-                        if (emailUtilisateur != null) {
-                            entity.setNomUtilisateur(emailUtilisateur);
-                        }
-                        if (typeUtilisateur != null) {
-                            entity.setNomUtilisateur(typeUtilisateur);
-                        }
-                        super.edit(entity);
-                        return Response.status(200).build();
-                    }
-                    return Response.status(404).build();
-                } else {
-                    return Response.status(401).build();
-                }
-            } else {
-                return Response.status(404).build();
+    @Path("/update/{id}")
+    public Response edit(@PathParam("id") Integer id, @FormParam("nom_utilisateur") String nomUtilisateur, @FormParam("prenom_utilisateur") String prenomUtilisateur, @FormParam("email_utilisateur") String emailUtilisateur, @FormParam("type_utilisateur") String typeUtilisateur) {
+        Utilisateur entity = super.find(id);
+        if (entity != null) {
+            if (nomUtilisateur != null) {
+                entity.setNomUtilisateur(nomUtilisateur);
             }
-        } else {
-            return Response.status(404).build();
+            if (prenomUtilisateur != null) {
+                entity.setNomUtilisateur(prenomUtilisateur);
+            }
+            if (emailUtilisateur != null) {
+                entity.setNomUtilisateur(emailUtilisateur);
+            }
+            if (typeUtilisateur != null) {
+                entity.setNomUtilisateur(typeUtilisateur);
+            }
+            super.edit(entity);
+            return Response.status(200).build();
         }
+        return Response.status(404).build();
     }
 
     @DELETE
-    @Path("delete/{id_utilisateur}/{id}")
-    public Response remove(@PathParam("id_utilisateur") int idUtilisateur, @PathParam("id") Integer id) {
-        if (idUtilisateur != 0) {
-            Utilisateur utilisateur = em.find(Utilisateur.class, idUtilisateur);
-            if (utilisateur != null) {
-                if ("admin".equalsIgnoreCase(utilisateur.getTypeUtilisateur())) {
-                    Utilisateur entity = super.find(id);
-                    if (entity != null) {
-                        super.remove(super.find(id));
-                        return Response.status(200).build();
-                    } else {
-                        return Response.status(404).build();
-                    }
-                } else {
-                    return Response.status(401).build();
-                }
-            } else {
-                return Response.status(404).build();
-            }
+    @Path("delete/{id}")
+    public Response remove(@PathParam("id") Integer id) {
+        Utilisateur entity = super.find(id);
+        if (entity != null) {
+            super.remove(super.find(id));
+            return Response.status(200).build();
         } else {
             return Response.status(404).build();
         }
-
     }
 
     @GET
