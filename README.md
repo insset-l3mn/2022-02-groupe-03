@@ -15,4 +15,4 @@ Voir le [diaporama de présentation](./docs/presentation.pdf) ou le dossier **do
 
 ## Démonstration
 
-Voir la [vidéo](./docs/demo.mp4)
+Voir la [vidéo](./docs/demo.mp4).
